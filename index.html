@@ -80,6 +80,7 @@
     background: var(--bg);
     color: var(--text);
     font-family: 'Lora', Georgia, serif;
+    font-size: 1rem;
     line-height: 1.8;
     overflow-x: hidden;
     transition: background 0.5s ease, color 0.5s ease;
@@ -605,14 +606,14 @@
   }
 
   // Font size control
-  const sizes = ['', 'size-large', 'size-xl'];
+  const sizes = ['default', 'size-large', 'size-xl'];
   let currentSize = 0;
 
   function changeSize(dir) {
     const html = document.documentElement;
-    html.classList.remove(sizes[currentSize]);
+    sizes.forEach(s => { if (s !== 'default') html.classList.remove(s); });
     currentSize = Math.max(0, Math.min(sizes.length - 1, currentSize + dir));
-    if (sizes[currentSize]) html.classList.add(sizes[currentSize]);
+    if (sizes[currentSize] !== 'default') html.classList.add(sizes[currentSize]);
   }
 </script>
 
