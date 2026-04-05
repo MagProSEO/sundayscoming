@@ -22,7 +22,8 @@
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
   :root {
-    --dark: #0a0a0f;
+    --bg: #0a0a0f;
+    --bg-hero: #0a0a0f;
     --gold: #c9a84c;
     --gold-soft: #d4b86a;
     --gold-glow: rgba(201, 168, 76, 0.15);
@@ -30,19 +31,132 @@
     --text: #c8c0b4;
     --text-light: #e8e0d4;
     --sunday-gold: #e8c95a;
+    --dim: rgba(200, 192, 180, 0.5);
+    --border: rgba(201, 168, 76, 0.08);
+    --footer-text: rgba(200, 192, 180, 0.4);
+    --footer-name: rgba(200, 192, 180, 0.6);
+    --controls-bg: rgba(10, 10, 15, 0.92);
+    --controls-border: rgba(201, 168, 76, 0.15);
+    --btn-bg: rgba(201, 168, 76, 0.1);
+    --btn-border: rgba(201, 168, 76, 0.3);
+    --hero-glow1: rgba(107, 45, 45, 0.2);
+    --hero-glow2: rgba(201, 168, 76, 0.05);
+    --finale-glow: rgba(201, 168, 76, 0.06);
   }
 
-  html { scroll-behavior: smooth; }
+  html.light {
+    --bg: #faf7f2;
+    --bg-hero: #f5f0e8;
+    --gold: #8b6914;
+    --gold-soft: #a07d2a;
+    --gold-glow: rgba(139, 105, 20, 0.1);
+    --cream: #2a2520;
+    --text: #4a4540;
+    --text-light: #3a3530;
+    --sunday-gold: #7a5c10;
+    --dim: rgba(74, 69, 64, 0.5);
+    --border: rgba(139, 105, 20, 0.12);
+    --footer-text: rgba(74, 69, 64, 0.5);
+    --footer-name: rgba(74, 69, 64, 0.7);
+    --controls-bg: rgba(250, 247, 242, 0.95);
+    --controls-border: rgba(139, 105, 20, 0.2);
+    --btn-bg: rgba(139, 105, 20, 0.08);
+    --btn-border: rgba(139, 105, 20, 0.25);
+    --hero-glow1: rgba(139, 105, 20, 0.06);
+    --hero-glow2: rgba(139, 105, 20, 0.03);
+    --finale-glow: rgba(139, 105, 20, 0.04);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    font-size: 18px;
+    transition: font-size 0.3s ease;
+  }
+
+  html.size-large { font-size: 22px; }
+  html.size-xl { font-size: 26px; }
 
   body {
-    background: var(--dark);
+    background: var(--bg);
     color: var(--text);
     font-family: 'Lora', Georgia, serif;
     line-height: 1.8;
-    font-size: 18px;
     overflow-x: hidden;
+    transition: background 0.5s ease, color 0.5s ease;
+    padding-bottom: 5rem;
   }
 
+  /* ===== CONTROLS BAR ===== */
+  .controls {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.75rem 1rem;
+    background: var(--controls-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid var(--controls-border);
+    transition: background 0.5s ease, border-color 0.5s ease;
+  }
+
+  .controls button {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    border: 1px solid var(--btn-border);
+    background: var(--btn-bg);
+    color: var(--gold);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  .controls button:active {
+    transform: scale(0.96);
+  }
+
+  .controls button.active {
+    background: var(--gold);
+    color: var(--bg);
+    border-color: var(--gold);
+  }
+
+  .controls .divider {
+    width: 1px;
+    height: 1.5rem;
+    background: var(--btn-border);
+    flex-shrink: 0;
+  }
+
+  .size-controls {
+    display: flex;
+    gap: 0.4rem;
+    align-items: center;
+  }
+
+  .size-controls button {
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    border-radius: 50%;
+  }
+
+  /* ===== HERO ===== */
   .hero {
     min-height: 100vh;
     display: flex;
@@ -52,9 +166,10 @@
     text-align: center;
     padding: 2rem;
     position: relative;
-    background: radial-gradient(ellipse at 50% 80%, rgba(107, 45, 45, 0.2) 0%, transparent 60%),
-                radial-gradient(ellipse at 50% 20%, rgba(201, 168, 76, 0.05) 0%, transparent 50%),
-                var(--dark);
+    background: radial-gradient(ellipse at 50% 80%, var(--hero-glow1) 0%, transparent 60%),
+                radial-gradient(ellipse at 50% 20%, var(--hero-glow2) 0%, transparent 50%),
+                var(--bg-hero);
+    transition: background 0.5s ease;
   }
 
   .hero::before {
@@ -72,6 +187,7 @@
     opacity: 0;
     animation: fadeDown 1.5s ease 0.3s forwards;
     text-shadow: 0 0 40px var(--gold-glow);
+    transition: color 0.5s ease;
   }
 
   .hero h1 {
@@ -84,6 +200,7 @@
     margin-bottom: 0.5rem;
     opacity: 0;
     animation: fadeUp 1.5s ease 0.6s forwards;
+    transition: color 0.5s ease;
   }
 
   .hero h1 .friday { color: var(--text); font-weight: 400; }
@@ -97,17 +214,19 @@
     opacity: 0;
     animation: fadeUp 1.5s ease 1s forwards;
     margin-top: 0.5rem;
+    transition: color 0.5s ease;
   }
 
   .hero .author {
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: clamp(0.95rem, 2vw, 1.1rem);
-    color: rgba(200, 192, 180, 0.5);
+    color: var(--dim);
     opacity: 0;
     animation: fadeUp 1.5s ease 1.2s forwards;
     margin-top: 1.5rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
+    transition: color 0.5s ease;
   }
 
   .scroll-hint {
@@ -120,6 +239,7 @@
     letter-spacing: 0.15em;
     text-transform: uppercase;
     font-family: 'Cormorant Garamond', Georgia, serif;
+    transition: color 0.5s ease;
   }
 
   .scroll-hint span {
@@ -129,6 +249,7 @@
     animation: bobDown 2s ease-in-out infinite;
   }
 
+  /* ===== POEM ===== */
   .poem {
     max-width: 720px;
     margin: 0 auto;
@@ -137,10 +258,10 @@
 
   .stanza {
     padding: 4rem 0;
-    border-bottom: 1px solid rgba(201, 168, 76, 0.08);
+    border-bottom: 1px solid var(--border);
     opacity: 0;
     transform: translateY(30px);
-    transition: opacity 0.8s ease, transform 0.8s ease;
+    transition: opacity 0.8s ease, transform 0.8s ease, border-color 0.5s ease;
   }
 
   .stanza.visible { opacity: 1; transform: translateY(0); }
@@ -153,6 +274,7 @@
     color: var(--cream);
     margin-bottom: 1rem;
     letter-spacing: 0.01em;
+    transition: color 0.5s ease;
   }
 
   .verse {
@@ -161,6 +283,7 @@
     line-height: 2;
     color: var(--text);
     margin-bottom: 1.2rem;
+    transition: color 0.5s ease;
   }
 
   .verse em { font-style: italic; color: var(--text-light); }
@@ -171,8 +294,9 @@
     font-weight: 600;
     color: var(--gold);
     margin-top: 1rem;
-    text-shadow: 0 0 30px rgba(201, 168, 76, 0.12);
+    text-shadow: 0 0 30px var(--gold-glow);
     letter-spacing: 0.02em;
+    transition: color 0.5s ease;
   }
 
   .refrain.loud {
@@ -182,7 +306,7 @@
   }
 
   .but { color: var(--gold-soft); font-style: italic; }
-  .dim { color: rgba(200, 192, 180, 0.5); }
+  .dim { color: var(--dim); transition: color 0.5s ease; }
 
   .ornament {
     text-align: center;
@@ -191,6 +315,7 @@
     font-size: 1.5rem;
     opacity: 0.3;
     letter-spacing: 0.5em;
+    transition: color 0.5s ease;
   }
 
   .finale { position: relative; }
@@ -203,16 +328,18 @@
     transform: translateX(-50%);
     width: 400px;
     height: 400px;
-    background: radial-gradient(circle, rgba(201, 168, 76, 0.06) 0%, transparent 70%);
+    background: radial-gradient(circle, var(--finale-glow) 0%, transparent 70%);
     pointer-events: none;
   }
 
+  /* ===== FOOTER ===== */
   .footer {
     text-align: center;
     padding: 4rem 2rem;
-    border-top: 1px solid rgba(201, 168, 76, 0.1);
+    border-top: 1px solid var(--border);
     max-width: 720px;
     margin: 0 auto;
+    transition: border-color 0.5s ease;
   }
 
   .footer .cross-end {
@@ -220,24 +347,28 @@
     color: var(--gold);
     margin-bottom: 1rem;
     text-shadow: 0 0 40px var(--gold-glow);
+    transition: color 0.5s ease;
   }
 
   .footer p {
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 1rem;
-    color: rgba(200, 192, 180, 0.4);
+    color: var(--footer-text);
     font-style: italic;
     line-height: 1.6;
+    transition: color 0.5s ease;
   }
 
   .footer .lockridge-name {
     font-size: 1.15rem;
-    color: rgba(200, 192, 180, 0.6);
+    color: var(--footer-name);
     font-style: normal;
     letter-spacing: 0.05em;
     margin-bottom: 0.25rem;
+    transition: color 0.5s ease;
   }
 
+  /* ===== ANIMATIONS ===== */
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
@@ -258,10 +389,13 @@
     50% { transform: translateY(6px); }
   }
 
+  /* ===== MOBILE ===== */
   @media (max-width: 600px) {
     .stanza { padding: 3rem 0; }
-    body { font-size: 16px; }
     .poem { padding: 0 1.25rem 4rem; }
+    .controls { gap: 0.4rem; padding: 0.6rem 0.75rem; }
+    .controls button { font-size: 0.78rem; padding: 0.45rem 0.75rem; }
+    .size-controls button { width: 2.2rem; height: 2.2rem; font-size: 1rem; }
   }
 </style>
 </head>
@@ -436,7 +570,18 @@
   <p>Pastor, Calvary Baptist Church, San Diego<br>1913 &ndash; 2000</p>
 </footer>
 
+<!-- Controls Bar -->
+<div class="controls">
+  <button id="lightToggle" onclick="toggleLight()">&#9728; Let There Be Light</button>
+  <div class="divider"></div>
+  <div class="size-controls">
+    <button onclick="changeSize(-1)" aria-label="Decrease font size">A&#8722;</button>
+    <button onclick="changeSize(1)" aria-label="Increase font size">A+</button>
+  </div>
+</div>
+
 <script>
+  // Scroll reveal
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) entry.target.classList.add('visible');
@@ -444,6 +589,31 @@
   }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
 
   document.querySelectorAll('.stanza, .ornament').forEach(el => observer.observe(el));
+
+  // Light mode toggle
+  function toggleLight() {
+    const html = document.documentElement;
+    const btn = document.getElementById('lightToggle');
+    html.classList.toggle('light');
+    if (html.classList.contains('light')) {
+      btn.innerHTML = '&#9790; Return to Darkness';
+      btn.classList.add('active');
+    } else {
+      btn.innerHTML = '&#9728; Let There Be Light';
+      btn.classList.remove('active');
+    }
+  }
+
+  // Font size control
+  const sizes = ['', 'size-large', 'size-xl'];
+  let currentSize = 0;
+
+  function changeSize(dir) {
+    const html = document.documentElement;
+    html.classList.remove(sizes[currentSize]);
+    currentSize = Math.max(0, Math.min(sizes.length - 1, currentSize + dir));
+    if (sizes[currentSize]) html.classList.add(sizes[currentSize]);
+  }
 </script>
 
 </body>
