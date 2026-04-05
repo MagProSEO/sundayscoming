@@ -397,7 +397,108 @@
     .controls { gap: 0.4rem; padding: 0.6rem 0.75rem; }
     .controls button { font-size: 0.78rem; padding: 0.45rem 0.75rem; }
     .size-controls button { width: 2.2rem; height: 2.2rem; font-size: 1rem; }
+    .video-wrapper iframe { height: 180px; }
   }
+
+  /* ===== LISTEN BUTTON ===== */
+  .listen-btn {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: clamp(0.85rem, 2vw, 0.95rem);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    padding: 0.6rem 1.5rem;
+    border-radius: 2rem;
+    border: 1px solid var(--btn-border);
+    background: var(--btn-bg);
+    color: var(--gold);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 1.5s ease 1.4s forwards;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  .listen-btn:hover { background: var(--gold); color: var(--bg); border-color: var(--gold); }
+  .listen-btn.playing { background: var(--gold); color: var(--bg); border-color: var(--gold); }
+
+  .video-wrapper {
+    max-width: 400px;
+    width: 90%;
+    margin-top: 1.2rem;
+    border-radius: 12px;
+    overflow: hidden;
+    opacity: 0;
+    max-height: 0;
+    transition: opacity 0.5s ease, max-height 0.5s ease, margin 0.5s ease;
+    border: 1px solid var(--btn-border);
+  }
+
+  .video-wrapper.visible {
+    opacity: 1;
+    max-height: 300px;
+    margin-top: 1.5rem;
+  }
+
+  .video-wrapper iframe {
+    width: 100%;
+    height: 225px;
+    display: block;
+    border: none;
+  }
+
+  /* ===== SHARE / BLESS CTA ===== */
+  .bless-section {
+    text-align: center;
+    padding: 3rem 2rem 2rem;
+    max-width: 720px;
+    margin: 0 auto;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+
+  .bless-section.visible { opacity: 1; transform: translateY(0); }
+
+  .bless-section p {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: clamp(1.1rem, 2.5vw, 1.3rem);
+    font-style: italic;
+    color: var(--dim);
+    margin-bottom: 1.2rem;
+    transition: color 0.5s ease;
+  }
+
+  .bless-btn {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: clamp(0.95rem, 2.5vw, 1.1rem);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    padding: 0.75rem 2rem;
+    border-radius: 2rem;
+    border: 1px solid var(--gold);
+    background: var(--gold);
+    color: var(--bg);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  .bless-btn:active { transform: scale(0.96); }
+
+  .bless-toast {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 0.95rem;
+    color: var(--gold);
+    margin-top: 1rem;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    height: 1.5rem;
+  }
+
+  .bless-toast.show { opacity: 1; }
 </style>
 </head>
 <body>
@@ -410,6 +511,14 @@
   </h1>
   <p class="subtitle">An Easter Meditation</p>
   <p class="author">Dr. S.M. Lockridge</p>
+  <button class="listen-btn" id="listenBtn" onclick="toggleListen()">&#9654; Listen to the Sermon</button>
+  <div class="video-wrapper" id="videoWrapper">
+    <iframe id="ytPlayer"
+      src="https://www.youtube.com/embed/QS2wPotScZY?enablejsapi=1&rel=0"
+      allow="autoplay; encrypted-media"
+      allowfullscreen
+      loading="lazy"></iframe>
+  </div>
   <div class="scroll-hint">
     Read
     <span>&#8595;</span>
@@ -565,6 +674,12 @@
 
 </div>
 
+<div class="bless-section" id="blessSection">
+  <p>Know someone who needs to hear this today?</p>
+  <button class="bless-btn" onclick="blessSomeone()">&#10013; Bless Someone With This</button>
+  <div class="bless-toast" id="blessToast"></div>
+</div>
+
 <footer class="footer">
   <div class="cross-end">&#10013;</div>
   <p class="lockridge-name">Dr. S.M. Lockridge</p>
@@ -589,7 +704,7 @@
     });
   }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
 
-  document.querySelectorAll('.stanza, .ornament').forEach(el => observer.observe(el));
+  document.querySelectorAll('.stanza, .ornament, .bless-section').forEach(el => observer.observe(el));
 
   // Light mode toggle
   function toggleLight() {
@@ -614,6 +729,50 @@
     sizes.forEach(s => { if (s !== 'default') html.classList.remove(s); });
     currentSize = Math.max(0, Math.min(sizes.length - 1, currentSize + dir));
     if (sizes[currentSize] !== 'default') html.classList.add(sizes[currentSize]);
+  }
+
+  // Listen toggle
+  let videoOpen = false;
+
+  function toggleListen() {
+    const wrapper = document.getElementById('videoWrapper');
+    const btn = document.getElementById('listenBtn');
+    videoOpen = !videoOpen;
+
+    if (videoOpen) {
+      wrapper.classList.add('visible');
+      btn.innerHTML = '&#10074;&#10074; Hide Player';
+      btn.classList.add('playing');
+    } else {
+      wrapper.classList.remove('visible');
+      btn.innerHTML = '&#9654; Listen to the Sermon';
+      btn.classList.remove('playing');
+    }
+  }
+
+  // Bless / Share
+  function blessSomeone() {
+    const url = 'https://sundaycoming.com';
+    const text = "It's Friday... But Sunday's Comin' - An Easter Meditation by Dr. S.M. Lockridge";
+    const toast = document.getElementById('blessToast');
+
+    if (navigator.share) {
+      navigator.share({ title: text, url: url })
+        .then(() => showToast(toast, 'God bless you for sharing.'))
+        .catch(() => {});
+    } else {
+      navigator.clipboard.writeText(url).then(() => {
+        showToast(toast, 'Link copied. Now go bless someone.');
+      }).catch(() => {
+        showToast(toast, 'Share this: ' + url);
+      });
+    }
+  }
+
+  function showToast(el, msg) {
+    el.textContent = msg;
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 3500);
   }
 </script>
 
